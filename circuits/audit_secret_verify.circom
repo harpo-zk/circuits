@@ -50,12 +50,11 @@ template AuditSecretVerify(nIn, nOut){
     auditSecret[0] <== c1verify.Ax;
     auditSecret[1] <== c1verify.Ay;
     auditSecret[2] <== nonce + sharedKey;
-    auditSecret[3] <== tokenType +  auditSecret[2];   
-    auditSecret[4] <== originPubKey[0] +  nonce;
-    auditSecret[5] <== originPubKey[1] +  nonce;  
-
-    auditSecret[6] <== destinyPubKey[0] +  nonce;  
-    auditSecret[7] <== destinyPubKey[1] +  nonce;
+    auditSecret[3] <== tokenType +  auditSecret[2];    
+    auditSecret[4] <== originPubKey[0] + nonce;      
+    auditSecret[5] <== originPubKey[1] + nonce;
+    auditSecret[6] <== destinyPubKey[0] + nonce;
+    auditSecret[7] <== destinyPubKey[1] + nonce;
 
     for(var m=1; m<nIn+1; m++){
         auditSecret[7+m] <== amountsIn[m-1] +  auditSecret[2];

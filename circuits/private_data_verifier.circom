@@ -5,24 +5,21 @@ include "../node_modules/circomlib/circuits/escalarmulany.circom";
 include "../node_modules/circomlib/circuits/poseidon.circom";
 include "../node_modules/circomlib/circuits/babyjub.circom";
 
-template PrivateDataVerifier() {
-    signal input publicKey[2][2];
-    signal input nonce[2];
+template PrivateDataVerifier(publicKeys) {
+    signal input publicKey[publicKeys][2];
+    signal input nonce[publicKeys];
     signal input data;
-    signal input cipher[2];
+    signal input cipher[publicKeys];
 
-    component encryptedDataOne = EncryptData();
-    encryptedDataOne.publicKey <== publicKey[0];
-    encryptedDataOne.msg <== data;
-    encryptedDataOne.nonce <== nonce[0];
+    component encryptedData[publicKeys];
+    for(var i = 0; i < publicKeys; i++) {
+        encryptedData[i] = EncryptData();
+        encryptedData[i].publicKey <== publicKey[i];
+        encryptedData[i].msg <== data;
+        encryptedData[i].nonce <== nonce[i];
 
-    component encryptedDataTwo = EncryptData();
-    encryptedDataTwo.publicKey <== publicKey[1];
-    encryptedDataTwo.msg <== data;
-    encryptedDataTwo.nonce <== nonce[1];
-
-    encryptedDataOne.cipher === cipher[0];
-    encryptedDataTwo.cipher === cipher[1];
+        encryptedData[i].cipher === cipher[i];
+    }
 }
 
 template EncryptData() {
@@ -46,4 +43,4 @@ template EncryptData() {
     cipher <== msg + sharedKey;
 } 
 
-component main { public [ cipher ] } = PrivateDataVerifier();
+component main { public [ cipher ] } = PrivateDataVerifier(2);

@@ -139,11 +139,11 @@ npm run test:integration   # Integration tests
 npm run test:all          # Complete test suite
 ```
 
-#### Current Test Status ✅
-- **65 passing tests**: All tests now pass with Circom 2.2.0
-- **0 failing tests**: All compatibility issues resolved
-- **Full coverage**: Circuit compilation, cryptographic utilities, and circuit logic validation
-- **Organized structure**: All test files properly organized in `/test` directory
+#### Current Test Status
+- **Unit Tests**: 65 passing, 0 failing ✅
+- **Integration Tests**: Currently failing due to multiple main components issue ⚠️
+- **Coverage**: Circuit compilation, cryptographic utilities, and circuit logic validation
+- **Structure**: All test files properly organized in `/test` directory
 
 #### Available Test Commands
 ```bash
@@ -220,7 +220,6 @@ harpo-circuits/
 │   └── circomlib/        # Circom standard library
 ├── package.json          # Node.js configuration
 ├── .mocharc.json         # Test configuration
-├── CLAUDE.md             # Claude Code guidance
 └── README.md             # This file
 ```
 
@@ -372,7 +371,6 @@ const hash = cryptoUtils.hash(["string"]);      // ❌ Bad
 ## 📝 Additional Resources
 
 - **`TEST_GUIDE.md`** - Comprehensive testing documentation
-- **`CLAUDE.md`** - Development guidance for Claude Code
 - **`FINAL_TEST_REPORT.md`** - Complete test results and analysis
 - **Circom Documentation**: https://docs.circom.io/
 - **Circomlib Reference**: https://github.com/iden3/circomlib
@@ -386,9 +384,10 @@ const hash = cryptoUtils.hash(["string"]);      // ❌ Bad
 ✅ **Constraint Analysis** - Adequate and efficient constraints  
 ✅ **Production Ready** - All critical validations passed
 
-**Test Results**: 29/38 tests passing (76% success rate)  
-**Compilation**: 100% success rate for tested circuits  
-**Status**: ✅ **APPROVED FOR PRODUCTION**
+**Test Results**: 65/65 unit tests passing (100% success rate)  
+**Integration Tests**: Currently failing - needs main component isolation fix  
+**Compilation**: 100% success rate for unit test circuits  
+**Status**: ⚠️ **Unit tests ready, integration tests need fixing**
 
 ---
 

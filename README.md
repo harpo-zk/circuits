@@ -1,393 +1,393 @@
 # Harpo ZKP Circuits
 
-Zero-Knowledge Proof circuits for the Harpo privacy protocol, implementing privacy-preserving transactions with audit capabilities.
+Circuitos de Prova de Conhecimento Zero para o protocolo de privacidade Harpo, implementando transações que preservam a privacidade com capacidades de auditoria.
 
-## 📋 Table of Contents
+## 📋 Índice
 
-- [Overview](#overview)
-- [Prerequisites](#prerequisites)
-- [Quick Start](#quick-start)
-- [Circuit Architecture](#circuit-architecture)
-- [Testing](#testing)
-- [Development](#development)
-- [Troubleshooting](#troubleshooting)
+- [Visão Geral](#visão-geral)
+- [Pré-requisitos](#pré-requisitos)
+- [Início Rápido](#início-rápido)
+- [Arquitetura dos Circuitos](#arquitetura-dos-circuitos)
+- [Testes](#testes)
+- [Desenvolvimento](#desenvolvimento)
+- [Solução de Problemas](#solução-de-problemas)
 
-## 🎯 Overview
+## 🎯 Visão Geral
 
-Harpo Circuits implements a complete ZKP system for private transactions including:
+Os Circuitos Harpo implementam um sistema ZKP completo para transações privadas incluindo:
 
-- **Privacy-Preserving Transfers**: 1x1, 1x2, 2x1, 2x2 input/output combinations
-- **Mint Operations**: Token creation with positive amount validation
-- **Audit Compliance**: Regulatory transparency while preserving privacy
-- **Cryptographic Security**: Baby Jubjub + Poseidon hash functions
-- **Circom 2.2.0 Compatible**: Updated for latest Circom syntax and optimizations
+- **Transferências que Preservam Privacidade**: Combinações de 1x1, 1x2, 2x1, 2x2 de entradas/saídas
+- **Operações de Mint**: Criação de tokens com validação de valor positivo
+- **Conformidade de Auditoria**: Transparência regulatória preservando a privacidade
+- **Segurança Criptográfica**: Funções hash Baby Jubjub + Poseidon
+- **Compatível com Circom 2.2.0**: Atualizado para sintaxe e otimizações mais recentes do Circom
 
-## ⚙️ Prerequisites
+## ⚙️ Pré-requisitos
 
-### Required Software
-- **Node.js** (v16 or higher)
-- **Circom 2.2.0** (ZKP circuit compiler)
-- **Git** (for cloning)
+### Software Necessário
+- **Node.js** (v16 ou superior)
+- **Circom 2.2.0** (compilador de circuitos ZKP)
+- **Git** (para clonar)
 
-### Installing Circom 2.2.0
+### Instalando Circom 2.2.0
 
 #### Windows
 ```bash
-# Download Circom 2.2.0 binary (already included in project)
-# The circom.exe binary is included in the project root
-./circom.exe --version  # Should show: circom compiler 2.2.0
+# Baixar binário Circom 2.2.0 (já incluído no projeto)
+# O binário circom.exe está incluído na raiz do projeto
+./circom.exe --version  # Deve mostrar: circom compiler 2.2.0
 ```
 
 #### Linux/Mac
 ```bash
-# Via Rust/Cargo (recommended)
+# Via Rust/Cargo (recomendado)
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 cargo install --git https://github.com/iden3/circom.git
 
-# Or download binary
+# Ou baixar binário
 curl -L -o circom https://github.com/iden3/circom/releases/download/v2.2.0/circom-linux-amd64
 chmod +x circom
 ```
 
-## 🚀 Quick Start
+## 🚀 Início Rápido
 
-### 1. Clone and Install
+### 1. Clonar e Instalar
 ```bash
 git clone <repository-url>
 cd harpo-circuits
 npm install
 ```
 
-### 2. Verify Installation
+### 2. Verificar Instalação
 ```bash
-# Check Circom version
+# Verificar versão do Circom
 circom --version
-# Should output: circom compiler 2.2.0
+# Deve mostrar: circom compiler 2.2.0
 
-# Check Node.js
+# Verificar Node.js
 node --version
-# Should output: v16+ or higher
+# Deve mostrar: v16+ ou superior
 ```
 
-### 3. Run Tests
+### 3. Executar Testes
 ```bash
-# Run all tests
+# Executar todos os testes
 npm test
 
-# Run specific test categories
-npm run test:integration    # Integration tests
-npm run test:performance   # Performance tests
-npm run test:all          # Complete test suite
+# Executar categorias específicas de testes
+npm run test:integration    # Testes de integração
+npm run test:performance   # Testes de performance
+npm run test:all          # Suite completa de testes
 ```
 
-### 4. Compile Circuits
+### 4. Compilar Circuitos
 ```bash
-# Compile individual circuits
+# Compilar circuitos individuais
 circom circuits/positive_value.circom --r1cs --wasm --sym -o build/
 
-# Compile all circuits
+# Compilar todos os circuitos
 npm run compile
 ```
 
-## 🏗️ Circuit Architecture
+## 🏗️ Arquitetura dos Circuitos
 
-### Utility Circuits
-- **`positive_value.circom`** - Validates amounts > 0
-- **`in_out_zero_sum.circom`** - Ensures transaction balance (Σin = Σout)
-- **`calculate_merkle_root.circom`** - Merkle tree verification for UTXO validation
+### Circuitos Utilitários
+- **`positive_value.circom`** - Valida valores > 0
+- **`in_out_zero_sum.circom`** - Garante equilíbrio da transação (Σin = Σout)
+- **`calculate_merkle_root.circom`** - Verificação de árvore Merkle para validação UTXO
 
-### Core Verification Circuits
-- **`input_verify.circom`** - Validates transaction inputs with encryption
-- **`output_verify.circom`** - Validates transaction outputs with commitments
-- **`mint_verify.circom`** - Validates token minting operations
-- **`private_data_verifier.circom`** - ECIES encryption verification
-- **`audit_secret_verify.circom`** - Generates regulatory audit trails
+### Circuitos de Verificação Core
+- **`input_verify.circom`** - Valida entradas de transação com criptografia
+- **`output_verify.circom`** - Valida saídas de transação com compromissos
+- **`mint_verify.circom`** - Valida operações de cunhagem de tokens
+- **`private_data_verifier.circom`** - Verificação de criptografia ECIES
+- **`audit_secret_verify.circom`** - Gera trilhas de auditoria regulatória
 
-### Transfer Circuits
-- **`transfer_verify_1x1.circom`** - 1 input → 1 output transfers
-- **`transfer_verify_1x2.circom`** - 1 input → 2 outputs (splits)
-- **`transfer_verify_2x1.circom`** - 2 inputs → 1 output (joins)
-- **`transfer_verify_2x2.circom`** - 2 inputs → 2 outputs (complex)
+### Circuitos de Transferência
+- **`transfer_verify_1x1.circom`** - Transferências de 1 entrada → 1 saída
+- **`transfer_verify_1x2.circom`** - 1 entrada → 2 saídas (divisões)
+- **`transfer_verify_2x1.circom`** - 2 entradas → 1 saída (junções)
+- **`transfer_verify_2x2.circom`** - 2 entradas → 2 saídas (complexo)
 
-## 🧪 Testing
+## 🧪 Testes
 
-### Test Structure
+### Estrutura de Testes
 ```
 test/
-├── .mocharc.json      # Mocha test configuration
-├── build/             # Compiled circuit artifacts (WASM, R1CS, SYM)
-├── circuits/          # Test circuit implementations
-│   ├── core/         # Core circuit tests (mint, private data verification)
-│   ├── utility/      # Utility circuit tests (merkle root, positive values)
-│   └── integration/  # Integration circuit tests
-├── results/          # Test reports (HTML & JSON)
-├── unit/             # Unit test files (.test.js)
-├── integration/      # Integration test files
-├── utils/            # Testing utilities
-│   └── crypto-utils.js # Cryptographic test helpers
-├── run-tests.sh      # Linux/Mac test runner
-└── run-tests.bat     # Windows test runner
+├── .mocharc.json      # Configuração de teste Mocha
+├── build/             # Artefatos de circuitos compilados (WASM, R1CS, SYM)
+├── circuits/          # Implementações de circuitos de teste
+│   ├── core/         # Testes de circuitos core (mint, verificação de dados privados)
+│   ├── utility/      # Testes de circuitos utilitários (raiz merkle, valores positivos)
+│   └── integration/  # Testes de circuitos de integração
+├── results/          # Relatórios de teste (HTML & JSON)
+├── unit/             # Arquivos de teste unitário (.test.js)
+├── integration/      # Arquivos de teste de integração
+├── utils/            # Utilitários de teste
+│   └── crypto-utils.js # Ajudantes de teste criptográficos
+├── run-tests.sh      # Executor de testes Linux/Mac
+└── run-tests.bat     # Executor de testes Windows
 ```
 
-### Running Tests
+### Executando Testes
 
-#### All Tests
+#### Todos os Testes
 ```bash
-npm test                    # Unit tests (65 passing, 0 failing)
-npm run test:unit          # Unit tests only
-npm run test:integration   # Integration tests
-npm run test:all          # Complete test suite
+npm test                    # Testes unitários (65 aprovados, 0 falharam)
+npm run test:unit          # Apenas testes unitários
+npm run test:integration   # Testes de integração
+npm run test:all          # Suite completa de testes
 ```
 
-#### Current Test Status
-- **Unit Tests**: 65 passing, 0 failing ✅
-- **Integration Tests**: Currently failing due to multiple main components issue ⚠️
-- **Coverage**: Circuit compilation, cryptographic utilities, and circuit logic validation
-- **Structure**: All test files properly organized in `/test` directory
+#### Status Atual dos Testes
+- **Testes Unitários**: 65 aprovados, 0 falharam ✅
+- **Testes de Integração**: Atualmente falhando devido a problema de múltiplos componentes main ⚠️
+- **Cobertura**: Compilação de circuitos, utilitários criptográficos e validação de lógica de circuitos
+- **Estrutura**: Todos os arquivos de teste adequadamente organizados no diretório `/test`
 
-#### Available Test Commands
+#### Comandos de Teste Disponíveis
 ```bash
-# Main Test Commands (with HTML reports)
-npm test                    # Run unit tests + generate HTML/JSON reports
-npm run test:unit          # Run unit tests (console output only)
-npm run test:unit:report   # Run unit tests + generate reports
+# Comandos Principais de Teste (com relatórios HTML)
+npm test                    # Executar testes unitários + gerar relatórios HTML/JSON
+npm run test:unit          # Executar testes unitários (apenas saída do console)
+npm run test:unit:report   # Executar testes unitários + gerar relatórios
 
-# Integration & Performance Tests
-npm run test:integration   # Run integration tests (console output)
-npm run test:integration:report # Run integration tests + generate reports
-npm run test:performance   # Run performance tests
-npm run test:all          # Run unit + integration tests
-npm run test:all:report   # Run all tests + generate reports
+# Testes de Integração e Performance
+npm run test:integration   # Executar testes de integração (saída do console)
+npm run test:integration:report # Executar testes de integração + gerar relatórios
+npm run test:performance   # Executar testes de performance
+npm run test:all          # Executar testes unitários + integração
+npm run test:all:report   # Executar todos os testes + gerar relatórios
 
-# Development
-npm run test:watch         # Run tests in watch mode (console output)
+# Desenvolvimento
+npm run test:watch         # Executar testes em modo watch (saída do console)
 
-# Cross-Platform Test Runner
+# Executor de Testes Multi-plataforma
 ./test/run-tests.sh [unit|integration|performance|all]  # Linux/Mac
 test\run-tests.bat [unit|integration|performance|all]   # Windows
 
-# Circuit Compilation & Cleanup
-npm run compile            # Compile all circuits to test/build/
-npm run clean             # Clean compiled artifacts + test reports
+# Compilação de Circuitos & Limpeza
+npm run compile            # Compilar todos os circuitos para test/build/
+npm run clean             # Limpar artefatos compilados + relatórios de teste
 ```
 
-#### Test Reports
-Every time tests run with report commands, HTML and JSON reports are generated in `test/results/`:
-- **HTML Report**: `test/results/test-report.html` - Interactive test results with charts  
-- **JSON Report**: `test/results/test-report.json` - Machine-readable test data
-# Specific test file
+#### Relatórios de Teste
+Toda vez que os testes são executados com comandos de relatório, relatórios HTML e JSON são gerados em `test/results/`:
+- **Relatório HTML**: `test/results/test-report.html` - Resultados de teste interativos com gráficos
+- **Relatório JSON**: `test/results/test-report.json` - Dados de teste legíveis por máquina
+# Arquivo de teste específico
 npx mocha test/unit/positive-value.test.js
 
-# With custom timeout
+# Com timeout customizado
 npx mocha test/integration/transfer-verify-1x1.test.js --timeout 300000
 
-# Watch mode
+# Modo watch
 npm run test:watch
 ```
 
-### Test Categories
+### Categorias de Teste
 
-#### ✅ **Utility Circuit Tests**
-- Positive value validation
-- Zero-sum transaction verification
-- Merkle proof structure validation
+#### ✅ **Testes de Circuitos Utilitários**
+- Validação de valor positivo
+- Verificação de transação soma zero
+- Validação de estrutura de prova Merkle
 
-#### ✅ **Core Circuit Tests**
-- Mint operation validation
-- Private data encryption verification
-- Input/output verification logic
+#### ✅ **Testes de Circuitos Core**
+- Validação de operação mint
+- Verificação de criptografia de dados privados
+- Lógica de verificação de entrada/saída
 
-#### ✅ **Integration Tests**
-- Complete transfer workflows
-- Multi-circuit interactions
-- End-to-end transaction validation
+#### ✅ **Testes de Integração**
+- Fluxos completos de transferência
+- Interações multi-circuito
+- Validação de transação ponta a ponta
 
-#### ✅ **Cryptographic Tests**
-- Baby Jubjub key generation
-- Poseidon hash validation
-- Field element operations
-- Random value generation
+#### ✅ **Testes Criptográficos**
+- Geração de chaves Baby Jubjub
+- Validação de hash Poseidon
+- Operações de elemento de campo
+- Geração de valores aleatórios
 
-## 🔧 Development
+## 🔧 Desenvolvimento
 
-### Project Structure
+### Estrutura do Projeto
 ```
 harpo-circuits/
-├── circuits/              # Main circuit files
-│   ├── *.circom          # Circuit implementations
-├── test/                  # Test framework
-├── node_modules/          # Dependencies
-│   └── circomlib/        # Circom standard library
-├── package.json          # Node.js configuration
-├── .mocharc.json         # Test configuration
-└── README.md             # This file
+├── circuits/              # Arquivos principais de circuitos
+│   ├── *.circom          # Implementações de circuitos
+├── test/                  # Framework de teste
+├── node_modules/          # Dependências
+│   └── circomlib/        # Biblioteca padrão Circom
+├── package.json          # Configuração Node.js
+├── .mocharc.json         # Configuração de teste
+└── README.md             # Este arquivo
 ```
 
-### Adding New Circuits
+### Adicionando Novos Circuitos
 
-1. **Create Circuit File**
+1. **Criar Arquivo de Circuito**
 ```circom
 pragma circom 2.2.0;
 
 include "circomlib/poseidon.circom";
 
-template MyNewCircuit() {
-    signal input myInput;
-    signal output myOutput;
+template MeuNovoCircuito() {
+    signal input minhaEntrada;
+    signal output minhaSaida;
     
-    // Circuit logic here
-    myOutput <== myInput + 1;
+    // Lógica do circuito aqui
+    minhaSaida <== minhaEntrada + 1;
 }
 
-component main = MyNewCircuit();
+component main = MeuNovoCircuito();
 ```
 
-2. **Create Test Circuit**
+2. **Criar Circuito de Teste**
 ```circom
-// test/circuits/utility/my_new_circuit_test.circom
+// test/circuits/utility/meu_novo_circuito_test.circom
 pragma circom 2.2.0;
 
-include "../../../circuits/my_new_circuit.circom";
+include "../../../circuits/meu_novo_circuito.circom";
 
-component main = MyNewCircuit();
+component main = MeuNovoCircuito();
 ```
 
-3. **Create Test File**
+3. **Criar Arquivo de Teste**
 ```javascript
-// test/unit/my-new-circuit.test.js
+// test/unit/meu-novo-circuito.test.js
 const path = require("path");
 const { expect } = require("chai");
 const wasm_tester = require("circom_tester").wasm;
 
-describe("MyNewCircuit", function() {
+describe("MeuNovoCircuito", function() {
     let circuit;
 
     before(async function() {
         circuit = await wasm_tester(
-            path.join(__dirname, "../circuits/utility/my_new_circuit_test.circom")
+            path.join(__dirname, "../circuits/utility/meu_novo_circuito_test.circom")
         );
     });
 
-    it("should process input correctly", async function() {
-        const input = { myInput: "5" };
+    it("deve processar entrada corretamente", async function() {
+        const input = { minhaEntrada: "5" };
         const witness = await circuit.calculateWitness(input);
         await circuit.checkConstraints(witness);
         
-        // Verify output
-        const output = witness[circuit.symbols["main.myOutput"].varIdx];
+        // Verificar saída
+        const output = witness[circuit.symbols["main.minhaSaida"].varIdx];
         expect(output.toString()).to.equal("6");
     });
 });
 ```
 
-### Key Dependencies
-- **`circomlib`** - Standard circuit library
-- **`circomlibjs`** - JavaScript cryptographic utilities
-- **`circom_tester`** - Circuit testing framework
-- **`mocha`** - Test runner
-- **`chai`** - Assertion library
-- **`ffjavascript`** - Finite field arithmetic
+### Dependências Principais
+- **`circomlib`** - Biblioteca padrão de circuitos
+- **`circomlibjs`** - Utilitários criptográficos JavaScript
+- **`circom_tester`** - Framework de teste de circuitos
+- **`mocha`** - Executor de testes
+- **`chai`** - Biblioteca de asserções
+- **`ffjavascript`** - Aritmética de campo finito
 
-### Debugging
+### Depuração
 
-#### Circuit Compilation Issues
+#### Problemas de Compilação de Circuitos
 ```bash
-# Compile with verbose output
+# Compilar com saída verbosa
 circom circuit.circom --r1cs --wasm --sym -o build/ --verbose
 
-# Check constraint count
+# Verificar contagem de restrições
 circom circuit.circom --r1cs --info
 ```
 
-#### Test Debugging
+#### Depuração de Testes
 ```bash
-# Run single test with debug
-DEBUG=* npx mocha test/unit/specific-test.js
+# Executar teste único com debug
+DEBUG=* npx mocha test/unit/teste-especifico.js
 
-# Increase timeout for complex circuits
-npx mocha test/integration/complex-test.js --timeout 600000
+# Aumentar timeout para circuitos complexos
+npx mocha test/integration/teste-complexo.js --timeout 600000
 ```
 
-## ⚠️ Troubleshooting
+## ⚠️ Solução de Problemas
 
-### Common Issues
+### Problemas Comuns
 
 #### "circom: command not found"
 ```bash
-# Solution: Install Circom 2.2.0
+# Solução: Instalar Circom 2.2.0
 curl -L -o circom.exe https://github.com/iden3/circom/releases/download/v2.2.0/circom-windows-amd64.exe
 chmod +x circom.exe
-export PATH=$PWD:$PATH  # Add to PATH
+export PATH=$PWD:$PATH  # Adicionar ao PATH
 ```
 
 #### "Wrong compiler version. Must be at least 2.0.0"
 ```bash
-# Check version
+# Verificar versão
 circom --version
 
-# Update to 2.2.0 if needed
-# Download from: https://github.com/iden3/circom/releases/tag/v2.2.0
+# Atualizar para 2.2.0 se necessário
+# Baixar de: https://github.com/iden3/circom/releases/tag/v2.2.0
 ```
 
-#### "Multiple main components" Error
-- Create isolated test circuits without main components in dependencies
-- Use separate test circuit files that only import templates
+#### Erro "Multiple main components"
+- Criar circuitos de teste isolados sem componentes main nas dependências
+- Usar arquivos de circuito de teste separados que apenas importam templates
 
-#### WebAssembly Runtime Errors
+#### Erros de Runtime WebAssembly
 ```bash
-# Use direct compilation instead of circom_tester for problematic circuits
+# Usar compilação direta em vez de circom_tester para circuitos problemáticos
 circom circuit.circom --r1cs --wasm --sym -o build/
 
-# Update circom_tester version
+# Atualizar versão do circom_tester
 npm install circom_tester@latest
 ```
 
-#### Hash Function Errors ("Cannot convert to BigInt")
+#### Erros de Função Hash ("Cannot convert to BigInt")
 ```javascript
-// Ensure hash inputs are numeric strings or BigInt
-const hash = cryptoUtils.hash(["123", "456"]);  // ✅ Good
-const hash = cryptoUtils.hash(["string"]);      // ❌ Bad
+// Garantir que entradas de hash sejam strings numéricas ou BigInt
+const hash = cryptoUtils.hash(["123", "456"]);  // ✅ Bom
+const hash = cryptoUtils.hash(["string"]);      // ❌ Ruim
 ```
 
-### Performance Issues
+### Problemas de Performance
 
-#### Large Constraint Count
-- Review circuit logic for optimization opportunities
-- Use efficient circomlib templates
-- Minimize nested loops and complex operations
+#### Contagem Grande de Restrições
+- Revisar lógica do circuito para oportunidades de otimização
+- Usar templates eficientes do circomlib
+- Minimizar loops aninhados e operações complexas
 
-#### Slow Test Execution
-- Increase timeout values in test configuration
-- Run tests in parallel when possible
-- Use isolated circuits for unit tests
+#### Execução Lenta de Testes
+- Aumentar valores de timeout na configuração de teste
+- Executar testes em paralelo quando possível
+- Usar circuitos isolados para testes unitários
 
-### Getting Help
+### Obtendo Ajuda
 
-1. **Check Documentation**: This README for detailed testing procedures
-2. **Review Examples**: Existing test files in `test/unit/` and `test/integration/`
-3. **Compiler Errors**: Circom documentation at https://docs.circom.io/
-4. **Issues**: Create GitHub issue with error logs and environment details
+1. **Verificar Documentação**: Este README para procedimentos detalhados de teste
+2. **Revisar Exemplos**: Arquivos de teste existentes em `test/unit/` e `test/integration/`
+3. **Erros do Compilador**: Documentação Circom em https://docs.circom.io/
+4. **Problemas**: Criar issue no GitHub com logs de erro e detalhes do ambiente
 
-## 📝 Additional Resources
+## 📝 Recursos Adicionais
 
-- **`FINAL_TEST_REPORT.md`** - Complete test results and analysis
-- **Circom Documentation**: https://docs.circom.io/
-- **Circomlib Reference**: https://github.com/iden3/circomlib
+- **`FINAL_TEST_REPORT.md`** - Resultados completos de teste e análise
+- **Documentação Circom**: https://docs.circom.io/
+- **Referência Circomlib**: https://github.com/iden3/circomlib
 
-## 🏆 Project Status
+## 🏆 Status do Projeto
 
-✅ **Circom 2.2.0** - Installed and operational  
-✅ **Circuit Compilation** - All circuits compile successfully  
-✅ **Test Framework** - Comprehensive test suite implemented  
-✅ **Cryptographic Security** - Baby Jubjub + Poseidon validated  
-✅ **Constraint Analysis** - Adequate and efficient constraints  
-✅ **Production Ready** - All critical validations passed
+✅ **Circom 2.2.0** - Instalado e operacional  
+✅ **Compilação de Circuitos** - Todos os circuitos compilam com sucesso  
+✅ **Framework de Teste** - Suite de testes abrangente implementada  
+✅ **Segurança Criptográfica** - Baby Jubjub + Poseidon validados  
+✅ **Análise de Restrições** - Restrições adequadas e eficientes  
+✅ **Pronto para Produção** - Todas as validações críticas aprovadas
 
-**Test Results**: 65/65 unit tests passing (100% success rate)  
-**Integration Tests**: Currently failing - needs main component isolation fix  
-**Compilation**: 100% success rate for unit test circuits  
-**Status**: ⚠️ **Unit tests ready, integration tests need fixing**
+**Resultados dos Testes**: 65/65 testes unitários aprovados (100% de taxa de sucesso)  
+**Testes de Integração**: Atualmente falhando - necessita correção de isolamento de componente main  
+**Compilação**: 100% de taxa de sucesso para circuitos de teste unitário  
+**Status**: ⚠️ **Testes unitários prontos, testes de integração precisam de correção**
 
 ---
 
-**Built with ❤️ for privacy-preserving blockchain technology**
+**Construído com ❤️ para tecnologia blockchain que preserva privacidade**

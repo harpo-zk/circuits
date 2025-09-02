@@ -363,14 +363,13 @@ const hash = cryptoUtils.hash(["string"]);      // ❌ Bad
 
 ### Getting Help
 
-1. **Check Documentation**: `TEST_GUIDE.md` for detailed testing procedures
+1. **Check Documentation**: This README for detailed testing procedures
 2. **Review Examples**: Existing test files in `test/unit/` and `test/integration/`
 3. **Compiler Errors**: Circom documentation at https://docs.circom.io/
 4. **Issues**: Create GitHub issue with error logs and environment details
 
 ## 📝 Additional Resources
 
-- **`TEST_GUIDE.md`** - Comprehensive testing documentation
 - **`FINAL_TEST_REPORT.md`** - Complete test results and analysis
 - **Circom Documentation**: https://docs.circom.io/
 - **Circomlib Reference**: https://github.com/iden3/circomlib

@@ -6,7 +6,7 @@ include "output_verify.circom";
 include "audit_secret_verify.circom";
 include "calculate_merkle_root.circom";
 
-template TransferVerify(nInputs, nOuts){
+template TransferVerify(nInputs, nOuts) {
     signal input msgInputs[nInputs][15];
     signal input privKeyInput;
     signal input tokenOutputs[nOuts][15];
@@ -72,4 +72,4 @@ template TransferVerify(nInputs, nOuts){
     
 }
 
-component main = TransferVerify(1,2);
+component main = TransferVerify(1, 2);

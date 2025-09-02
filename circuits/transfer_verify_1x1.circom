@@ -19,6 +19,7 @@ template TransferVerify(nInputs, nOuts){
     signal output nullifierInputs[nInputs];   
     signal output commitmentOutputs[nOuts];
     signal output auditSecret[8 + nInputs + nOuts];
+    signal output nullifierAuthorityInputs[nInputs];
 
     signal commitmentInputs[nInputs];        
     
@@ -37,7 +38,11 @@ template TransferVerify(nInputs, nOuts){
         
         nullifierInputs[j] <== inputVerify[j].nullifier;
         commitmentInputs[j] <== inputVerify[j].commitment; 
-               
+        nullifierAuthorityInputs[j] <== Poseidon(3)([
+            msgInputs[j][2],
+            pubKeyAuthority[0],
+            pubKeyAuthority[1]
+        ]);               
     }
     component calculateMerkleRoot = CalculateMerkleRoot(nInputs);
 

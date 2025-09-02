@@ -31,4 +31,3 @@ template MintVerify(){
     
 }
 
-component main = MintVerify();

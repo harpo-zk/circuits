@@ -1,0 +1,17 @@
+{
+  "timeout": 60000,
+  "recursive": true,
+  "spec": "test/unit/**/*.test.js",
+  "reporter": "mochawesome",
+  "reporterOptions": {
+    "reportDir": "test/results",
+    "reportFilename": "test-report",
+    "html": true,
+    "json": true,
+    "overwrite": true
+  },
+  "slow": 30000,
+  "bail": false,
+  "color": true,
+  "exit": true
+}

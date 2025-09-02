@@ -77,16 +77,16 @@ template EncryptMessagePub() {
     cipherMsg[0] <== c1verify.Ax;
     cipherMsg[1] <== c1verify.Ay;
     cipherMsg[2] <== msg[2] + sharedKey;
-    cipherMsg[3] <== msg[3] + msg[2] + sharedKey;  
-    cipherMsg[4] <== msg[4] + msg[2] + sharedKey;  
-    cipherMsg[5] <== msg[5] + msg[2] + sharedKey;  
-    cipherMsg[6] <== msg[6] + msg[2] + sharedKey;  
-    cipherMsg[7] <== msg[7] + msg[2] + sharedKey;  
-    cipherMsg[8] <== msg[8] + msg[2] + sharedKey;  
-    cipherMsg[9] <== msg[9] + msg[2] + sharedKey;
-    cipherMsg[10] <== msg[10] + msg[2] + sharedKey;  
-    cipherMsg[11] <== msg[11] + msg[2] + sharedKey;  
-    cipherMsg[12] <== msg[12] + msg[2] + sharedKey;  
-    cipherMsg[13] <== msg[13] + msg[2] + sharedKey;  
-    cipherMsg[14] <== msg[14] + msg[2] + sharedKey;      
+    cipherMsg[3] <== msg[3] + sharedKey;  
+    cipherMsg[4] <== msg[4] + sharedKey;  
+    cipherMsg[5] <== msg[5] + sharedKey;  
+    cipherMsg[6] <== msg[6] + sharedKey;  
+    cipherMsg[7] <== msg[7] + sharedKey;  
+    cipherMsg[8] <== msg[8] + sharedKey;  
+    cipherMsg[9] <== msg[9] + sharedKey;
+    cipherMsg[10] <== msg[10] + sharedKey;  
+    cipherMsg[11] <== msg[11] + sharedKey;  
+    cipherMsg[12] <== msg[12] + sharedKey;  
+    cipherMsg[13] <== msg[13] + sharedKey;  
+    cipherMsg[14] <== msg[14] + sharedKey;      
 }

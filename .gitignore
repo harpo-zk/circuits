@@ -2,3 +2,13 @@
 /circuits/powersOfTau28_hez_final_16.ptau
 /circuits/powersOfTau28_hez_final_17.ptau
 /circuits/powersOfTau28_hez_final_20.ptau
+
+node_modules/
+
+# Test results and build artifacts
+test/results/
+test/build/
+*.r1cs
+*.sym
+*.wasm
+*_js/

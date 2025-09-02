@@ -1,0 +1,37 @@
+{
+  "name": "harpo-circuits",
+  "version": "1.0.0",
+  "description": "Harpo ZKP circuits for privacy-preserving transactions",
+  "scripts": {
+    "test": "npx mocha test/unit/**/*.js --timeout 60000 --reporter mochawesome --reporter-options reportDir=test/results,reportFilename=test-report,html=true,json=true,overwrite=true",
+    "test:unit": "npx mocha test/unit/**/*.js --timeout 60000 --reporter spec",
+    "test:unit:report": "npx mocha test/unit/**/*.js --timeout 60000 --reporter mochawesome --reporter-options reportDir=test/results,reportFilename=unit-test-report,html=true,json=true,overwrite=true",
+    "test:integration": "npx mocha test/integration/**/*.js --timeout 120000 --reporter spec",
+    "test:integration:report": "npx mocha test/integration/**/*.js --timeout 120000 --reporter mochawesome --reporter-options reportDir=test/results,reportFilename=integration-test-report,html=true,json=true,overwrite=true",
+    "test:performance": "npx mocha test/performance/**/*.js --timeout 300000",
+    "test:all": "npm run test:unit && npm run test:integration",
+    "test:all:report": "npm run test:unit:report && npm run test:integration:report",
+    "test:watch": "npx mocha test/unit/**/*.js --watch --reporter spec",
+    "compile": "circom.exe circuits/*.circom --r1cs --wasm --sym -o test/build/",
+    "clean": "rm -rf test/build/* test/circuits/**/*.r1cs test/circuits/**/*.wasm test/circuits/**/*.sym test/results/*"
+  },
+  "devDependencies": {
+    "chai": "^4.3.10",
+    "circom_tester": "^0.0.19",
+    "circomlib": "^2.0.5",
+    "ffjavascript": "^0.2.60",
+    "mocha": "^10.2.0",
+    "mochawesome": "^7.1.3"
+  },
+  "keywords": [
+    "circom",
+    "zk-proofs",
+    "privacy",
+    "blockchain"
+  ],
+  "author": "Harpo Team",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "circomlibjs": "^0.1.7"
+  }
+}

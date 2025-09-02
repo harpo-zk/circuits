@@ -72,4 +72,4 @@ template TransferVerify(nInputs, nOuts){
     
 }
 
-component main = TransferVerify(2,1);
+component main = TransferVerify(2, 1);

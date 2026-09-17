@@ -2,6 +2,22 @@
 
 Circuitos de Prova de Conhecimento Zero para o protocolo de privacidade Harpo, implementando transações que preservam a privacidade com capacidades de auditoria.
 
+## 🧩 Circuitos de liquidação confidencial
+
+Os circuitos abaixo são os que os domínios ZK da camada de privacidade
+(implementação de referência em
+[`harpo-zk/contracts`](https://github.com/harpo-zk/contracts)) verificam:
+
+| Circuito | Prova |
+|---|---|
+| `pix_payment_verify.circom` | `(amount, salt, e2eId, txid)` bate com o commitment registrado on-chain, sem revelar nenhum dos quatro — testado em [`test/unit/pix-payment-verify.test.js`](test/unit/pix-payment-verify.test.js) |
+| `compliance_range_verify.circom` | `amount < limit` sem revelar o `amount` |
+| `sanctions_exclusion_verify.circom` | não-pertencimento a uma SMT de sanções, sem revelar a contraparte |
+| `kyc_inclusion_verify.circom` / `kyc_inclusion_verify_out.circom` | pertencimento a uma SMT de identidades KYC-verificadas |
+| `identity_verify.circom` | posse de uma chave Baby JubJub válida |
+| `token_settlement_verify.circom` | variante de liquidação para transferência de token |
+| `mint_property_token_verify.circom` | mint de token de propriedade com validação de valor positivo |
+
 ## 📋 Índice
 
 - [Visão Geral](#visão-geral)

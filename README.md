@@ -2,6 +2,38 @@
 
 Circuitos de Prova de Conhecimento Zero para o protocolo de privacidade Harpo, implementando transações que preservam a privacidade com capacidades de auditoria.
 
+## 🧠 O que é um circuito ZK, em linguagem simples
+
+Um **circuito** aqui não é um circuito elétrico — é uma "receita matemática"
+que descreve exatamente qual afirmação está sendo provada. Por exemplo: "eu
+conheço um valor, um destinatário e um identificador de cobrança tal que,
+juntos, formam este selo público" — sem revelar quais são esse valor,
+destinatário ou identificador.
+
+Quem quer provar algo roda esse circuito **fora da blockchain** (é rápido,
+segundos) e gera uma **prova** — um pacote de bytes que qualquer um consegue
+conferir matematicamente, sem precisar confiar em quem provou nem repetir o
+cálculo original. Essa prova é o que vai para a blockchain.
+
+```mermaid
+sequenceDiagram
+    participant Dados as Dados privados (fora da blockchain)
+    participant Circ as Circuito (fora da blockchain)
+    participant Chain as Verificador (na blockchain)
+
+    Dados->>Circ: valor, partes, identificadores...
+    Circ-->>Dados: prova matemática (não revela os dados)
+    Dados->>Chain: envia só a prova + o selo público
+    Chain->>Chain: confere a matemática (não vê os dados)
+    Chain-->>Dados: válida ou inválida
+```
+
+**Por que isso importa pro negócio:** dá pra provar afirmações verdadeiras
+sobre uma transação — "o valor está dentro do limite permitido", "essa
+contraparte não está numa lista de sanções", "esse pagamento é o que diz ser"
+— sem nunca colocar o dado sensível em uma blockchain pública, que qualquer
+um pode ler para sempre.
+
 ## 🧩 Circuitos de liquidação confidencial
 
 Os circuitos abaixo são os que os domínios ZK da camada de privacidade
@@ -17,6 +49,38 @@ Os circuitos abaixo são os que os domínios ZK da camada de privacidade
 | `identity_verify.circom` | posse de uma chave Baby JubJub válida |
 | `token_settlement_verify.circom` | variante de liquidação para transferência de token |
 | `mint_property_token_verify.circom` | mint de token de propriedade com validação de valor positivo |
+
+### Compliance sem exposição: "está dentro do limite?" sem dizer o valor
+
+```mermaid
+sequenceDiagram
+    participant Emp as Empresa
+    participant Circ as compliance_range_verify
+    participant Chain as Verificador on-chain
+
+    Emp->>Circ: valor real da transação (privado)
+    Circ-->>Emp: prova de que valor < limite permitido
+    Emp->>Chain: envia a prova (não o valor)
+    Chain-->>Emp: aprovado — sem nunca saber o valor exato
+```
+
+### Sanções e KYC sem expor a contraparte
+
+```mermaid
+sequenceDiagram
+    participant Emp as Empresa
+    participant Circ as sanctions_exclusion_verify / kyc_inclusion_verify
+    participant Chain as Verificador on-chain
+
+    Emp->>Circ: identidade da contraparte (privada) + lista oficial
+    Circ-->>Emp: prova de pertencimento/não-pertencimento à lista
+    Emp->>Chain: envia a prova (não a identidade)
+    Chain-->>Emp: aprovado — sem revelar quem é a contraparte
+```
+
+*A lista de sanções ou a base de identidades KYC-verificadas em si pode ser
+pública (é uma árvore Merkle esparsa — SMT); o que fica em segredo é
+**quem**, especificamente, está sendo checado contra ela.*
 
 ## 📋 Índice
 

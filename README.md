@@ -82,25 +82,27 @@ sequenceDiagram
 pública (é uma árvore Merkle esparsa — SMT); o que fica em segredo é
 **quem**, especificamente, está sendo checado contra ela.*
 
-## 📋 Índice
+## 🔁 Circuitos de transferência privada (UTXO)
 
-- [Visão Geral](#visão-geral)
-- [Pré-requisitos](#pré-requisitos)
-- [Início Rápido](#início-rápido)
-- [Arquitetura dos Circuitos](#arquitetura-dos-circuitos)
-- [Testes](#testes)
-- [Desenvolvimento](#desenvolvimento)
-- [Solução de Problemas](#solução-de-problemas)
+Além dos circuitos de liquidação confidencial acima, este repositório mantém
+o conjunto de circuitos da **transferência privada baseada em UTXO**, a
+geração original do protocolo Harpo: entradas/saídas explícitas com
+nullifiers, prova de posse de chave Baby JubJub, e cunhagem de token com
+validação de valor positivo —
+(`transfer_verify_1x1/1x2/2x1/2x2`, `input_verify`, `output_verify`,
+`mint_verify`, `positive_value`, `in_out_zero_sum`, `calculate_merkle_root`,
+`audit_secret_verify`, `private_data_verifier`). É uma arquitetura diferente
+da camada de liquidação confidencial (que resolve "essa liquidação é válida?"
+contra um domínio plugável) — aqui o circuito prova a validade de uma
+transferência UTXO completa, com equilíbrio de soma e trilha de auditoria
+própria. Continua uma feature real e documentada do protocolo, não vestígio
+morto.
 
-## 🎯 Visão Geral
-
-Os Circuitos Harpo implementam um sistema ZKP completo para transações privadas incluindo:
-
-- **Transferências que Preservam Privacidade**: Combinações de 1x1, 1x2, 2x1, 2x2 de entradas/saídas
-- **Operações de Mint**: Criação de tokens com validação de valor positivo
-- **Conformidade de Auditoria**: Transparência regulatória preservando a privacidade
-- **Segurança Criptográfica**: Funções hash Baby Jubjub + Poseidon
-- **Compatível com Circom 2.2.0**: Atualizado para sintaxe e otimizações mais recentes do Circom
+Os testes de integração desses circuitos (`test/integration/`) estão
+atualmente quebrados por um conflito real do compilador Circom — dois
+`component main` (um no circuito original, outro no arquivo de teste que o
+inclui) — não um problema de ambiente. Não afeta os circuitos de liquidação
+confidencial do topo deste README, que só têm testes unitários.
 
 ## ⚙️ Pré-requisitos
 
@@ -171,23 +173,15 @@ npm run compile
 
 ## 🏗️ Arquitetura dos Circuitos
 
-### Circuitos Utilitários
-- **`positive_value.circom`** - Valida valores > 0
-- **`in_out_zero_sum.circom`** - Garante equilíbrio da transação (Σin = Σout)
-- **`calculate_merkle_root.circom`** - Verificação de árvore Merkle para validação UTXO
+Circuitos de liquidação confidencial (ver tabela acima):
+`pix_payment_verify`, `compliance_range_verify`, `sanctions_exclusion_verify`,
+`kyc_inclusion_verify` / `kyc_inclusion_verify_out`, `identity_verify`,
+`token_settlement_verify`, `mint_property_token_verify`.
 
-### Circuitos de Verificação Core
-- **`input_verify.circom`** - Valida entradas de transação com criptografia
-- **`output_verify.circom`** - Valida saídas de transação com compromissos
-- **`mint_verify.circom`** - Valida operações de cunhagem de tokens
-- **`private_data_verifier.circom`** - Verificação de criptografia ECIES
-- **`audit_secret_verify.circom`** - Gera trilhas de auditoria regulatória
-
-### Circuitos de Transferência
-- **`transfer_verify_1x1.circom`** - Transferências de 1 entrada → 1 saída
-- **`transfer_verify_1x2.circom`** - 1 entrada → 2 saídas (divisões)
-- **`transfer_verify_2x1.circom`** - 2 entradas → 1 saída (junções)
-- **`transfer_verify_2x2.circom`** - 2 entradas → 2 saídas (complexo)
+Circuitos de transferência privada UTXO (ver seção acima):
+`positive_value`, `in_out_zero_sum`, `calculate_merkle_root`, `input_verify`,
+`output_verify`, `mint_verify`, `private_data_verifier`, `audit_secret_verify`,
+`transfer_verify_1x1/1x2/2x1/2x2`.
 
 ## 🧪 Testes
 
@@ -196,97 +190,31 @@ npm run compile
 test/
 ├── .mocharc.json      # Configuração de teste Mocha
 ├── build/             # Artefatos de circuitos compilados (WASM, R1CS, SYM)
-├── circuits/          # Implementações de circuitos de teste
-│   ├── core/         # Testes de circuitos core (mint, verificação de dados privados)
-│   ├── utility/      # Testes de circuitos utilitários (raiz merkle, valores positivos)
-│   └── integration/  # Testes de circuitos de integração
-├── results/          # Relatórios de teste (HTML & JSON)
-├── unit/             # Arquivos de teste unitário (.test.js)
-├── integration/      # Arquivos de teste de integração
-├── utils/            # Utilitários de teste
-│   └── crypto-utils.js # Ajudantes de teste criptográficos
-├── run-tests.sh      # Executor de testes Linux/Mac
-└── run-tests.bat     # Executor de testes Windows
+├── results/           # Relatórios de teste (HTML & JSON)
+├── unit/               # Testes unitários (.test.js) — circuitos de liquidação confidencial + transferência UTXO isolados
+├── integration/        # Testes de integração — hoje só os circuitos de transferência UTXO
+└── utils/
+    └── crypto-utils.js
 ```
 
-### Executando Testes
-
-#### Todos os Testes
+### Executando testes
 ```bash
-npm test                    # Testes unitários (65 aprovados, 0 falharam)
-npm run test:unit          # Apenas testes unitários
-npm run test:integration   # Testes de integração
-npm run test:all          # Suite completa de testes
+npm run test:unit          # Testes unitários — único caminho verde hoje
+npm run test:integration   # Testes de integração — ver nota de status abaixo
+npm run test:all           # Os dois
+npm run test:watch         # Modo watch
 ```
 
-#### Status Atual dos Testes
-- **Testes Unitários**: 65 aprovados, 0 falharam ✅
-- **Testes de Integração**: Atualmente falhando devido a problema de múltiplos componentes main ⚠️
-- **Cobertura**: Compilação de circuitos, utilitários criptográficos e validação de lógica de circuitos
-- **Estrutura**: Todos os arquivos de teste adequadamente organizados no diretório `/test`
+### Status real (última execução local)
+- **Testes unitários**: 71 passando, 0 falhando (`npm run test:unit`).
+- **Testes de integração**: falhando com `error[P1002]: Multiple main components`
+  ao compilar `transfer_verify_1x1_test.circom` — conflito real entre o
+  `component main` do circuito de transferência e o do arquivo de teste que o
+  inclui, não um problema de ambiente local. Afeta só os circuitos de
+  transferência UTXO listados acima.
 
-#### Comandos de Teste Disponíveis
-```bash
-# Comandos Principais de Teste (com relatórios HTML)
-npm test                    # Executar testes unitários + gerar relatórios HTML/JSON
-npm run test:unit          # Executar testes unitários (apenas saída do console)
-npm run test:unit:report   # Executar testes unitários + gerar relatórios
-
-# Testes de Integração e Performance
-npm run test:integration   # Executar testes de integração (saída do console)
-npm run test:integration:report # Executar testes de integração + gerar relatórios
-npm run test:performance   # Executar testes de performance
-npm run test:all          # Executar testes unitários + integração
-npm run test:all:report   # Executar todos os testes + gerar relatórios
-
-# Desenvolvimento
-npm run test:watch         # Executar testes em modo watch (saída do console)
-
-# Executor de Testes Multi-plataforma
-./test/run-tests.sh [unit|integration|performance|all]  # Linux/Mac
-test\run-tests.bat [unit|integration|performance|all]   # Windows
-
-# Compilação de Circuitos & Limpeza
-npm run compile            # Compilar todos os circuitos para test/build/
-npm run clean             # Limpar artefatos compilados + relatórios de teste
-```
-
-#### Relatórios de Teste
-Toda vez que os testes são executados com comandos de relatório, relatórios HTML e JSON são gerados em `test/results/`:
-- **Relatório HTML**: `test/results/test-report.html` - Resultados de teste interativos com gráficos
-- **Relatório JSON**: `test/results/test-report.json` - Dados de teste legíveis por máquina
-# Arquivo de teste específico
-npx mocha test/unit/positive-value.test.js
-
-# Com timeout customizado
-npx mocha test/integration/transfer-verify-1x1.test.js --timeout 300000
-
-# Modo watch
-npm run test:watch
-```
-
-### Categorias de Teste
-
-#### ✅ **Testes de Circuitos Utilitários**
-- Validação de valor positivo
-- Verificação de transação soma zero
-- Validação de estrutura de prova Merkle
-
-#### ✅ **Testes de Circuitos Core**
-- Validação de operação mint
-- Verificação de criptografia de dados privados
-- Lógica de verificação de entrada/saída
-
-#### ✅ **Testes de Integração**
-- Fluxos completos de transferência
-- Interações multi-circuito
-- Validação de transação ponta a ponta
-
-#### ✅ **Testes Criptográficos**
-- Geração de chaves Baby Jubjub
-- Validação de hash Poseidon
-- Operações de elemento de campo
-- Geração de valores aleatórios
+Esses números não são fixos — rode `npm run test:unit` você mesmo antes de
+confiar neles; não foram copiados de um relatório antigo.
 
 ## 🔧 Desenvolvimento
 
